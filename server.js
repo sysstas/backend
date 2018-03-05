@@ -5,13 +5,10 @@ var mongoose = require('mongoose')
 var app = express()
 
 var User = require('./models/User.js')
+var Post = require('./models/Post.js')
 var auth = require('./auth.js')
 
-//placeholder for posts
-var posts = [
-    {message: 'hello'},
-    {message: 'hi'}
-]
+
 
 //using CORS middleware. It is needed for resolving different front-back servers urls access controll
 app.use(cors())
@@ -19,8 +16,26 @@ app.use(cors())
 app.use(bodyParser.json())
 
 // hello world example
-app.get('/posts', (req, res) => {
+app.get('/posts/:id', async (req, res) => {
+    var author = req.params.id
+    var posts = await Post.find({author})
     res.send(posts)
+})
+
+app.post('/post', (req, res) => {
+    var postData = req.body
+    postData.author = '5a9867182f3aac15c8a0a6e4'
+
+    var post = new Post(postData)
+    
+
+    post.save((err, result) => {
+        if(err){
+            console.error('saving post error')
+            return res.status(500).send({message: 'saving post error'})
+        }
+        res.sendStatus(200)
+    })
 })
 
 app.get('/users', async (req, res) => {
