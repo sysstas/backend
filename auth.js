@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
         if(!isMatch)
             return res.status(401).send({message: 'Email or Password invalid'})
 
-        var payload = {}
+        var payload = { sub: user._id }
 
         var token = jwt.encode(payload, '123')
     
